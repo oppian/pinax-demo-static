@@ -83,7 +83,7 @@ def do_django(deploy_dir):
     print "Running django commands"
 
     # syncdb: python manage.py syncdb --noinput
-    _pcall(['python', 'manage.py', 'syncdb', '--noinput', ])
+    _pcall(['python', 'manage.py', 'pinax-demo-social', 'syncdb', '--noinput', ])
 
     # chown the deploy dir to be the apache user
     APACHE_USER = _getenv('APACHE_USER')
