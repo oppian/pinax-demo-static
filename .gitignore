@@ -1,0 +1,4 @@
+*.pyc
+pinax-env
+.DS_Store
+.svn
