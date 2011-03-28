@@ -1,0 +1,18 @@
+KeepAlive Off
+
+<VirtualHost *:80>
+
+    ServerName $SITE_DOMAIN
+
+    ServerAdmin admin@oppian.com
+
+    CustomLog ${DEPLOY_DIR}/access.log combined
+    ErrorLog ${DEPLOY_DIR}/error.log
+    LogLevel warn
+    
+    WSGIDaemonProcess pinax-demo-static python-path=${DEPLOY_DIR}/pinax-env/lib/python2.6/site-packages
+    WSGIProcessGroup pinax-demo-static
+
+    WSGIScriptAlias / $DEPLOY_DIR/pinax-demo-social/deploy/pinax.wsgi
+    
+</VirtualHost>
