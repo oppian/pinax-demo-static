@@ -60,6 +60,9 @@ def do_virtualenv(deploy_dir):
     """
     Set up the virtual environment.
     """
+    print "Installing virtualenv"
+    # easy_install virtualenv
+    _pcall('easy_install virtualenv')
     env = 'pinax-env'
     print "Setting up virtual environment"
     env_bin_dir = os.path.join(deploy_dir, env, 'bin')
