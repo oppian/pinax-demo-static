@@ -55,6 +55,36 @@ def _template(source, dest, mapping=os.environ):
     dest_file = open(dest, 'w')
     dest_file.write(result)
     dest_file.close()
+    
+def _update_pgpass(hostname, database, username, password):
+    """
+    Using the DB_* env vars, updates the pgpass file.
+    """
+    pgpass_line = "%s:*:%s:%s" % (hostname, database, username)
+    pgpass_filename = os.path.expanduser('~postgres/.pgpass')
+    try:
+        # if exists the .pgpass file, move it then write it out without
+        os.rename(pgpass_filename, '%s.tmp' % pgpass_filename)
+        pgpass_old = open('%s.tmp' % pgpass_filename, 'r')
+        pgpass = open(pgpass_filename, 'w')
+        for line in pgpass_old:
+            # skip if the first part of the line matches our line
+            if line[:len(pgpass_line)] != pgpass_line:
+                pgpass.write(line)
+        pgpass.close()
+    except:
+        # file doesn't exist
+        pgpass = open(pgpass_filename, 'w')
+        pgpass.close()
+    # append new line
+    pgpass_line = '%s:%s\n' % (pgpass_line, password)
+    print "Updating .pgpass - %s" % pgpass_line
+    pgpass = open(pgpass_filename, 'a')
+    pgpass.write(pgpass_line)
+    pgpass.close()
+    os.chmod(pgpass_filename, 0600)
+    os.chown(pgpass_filename, pwd.getpwnam('postgres')[2], pwd.getpwnam('postgres')[3])
+
 
 def do_virtualenv(deploy_dir):
     """
