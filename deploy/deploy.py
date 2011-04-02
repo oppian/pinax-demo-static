@@ -89,6 +89,100 @@ def do_django(deploy_dir):
     APACHE_USER = _getenv('APACHE_USER')
     _pcall(['chown', '-R', APACHE_USER, deploy_dir])
 
+
+def do_database():
+    """
+    If DB_SETUP is True then it wipes the database.
+    
+    If BUILD_TYPE is 'staging' then it migrates the db using 
+    env vars DB_COPY_*
+    
+    Env vars used:
+     * DB_USER
+     * DB_PASS
+     * DB_NAME
+    """
+    DB_USER = _getenv('DB_USER')
+    DB_PASS = _getenv('DB_PASS')
+    DB_NAME = _getenv('DB_NAME')
+    DB_HOST = _getenv('DB_HOST')
+    DB_SETUP = eval(_getenv('DB_SETUP'))
+    DB_COPY = eval(os.environ.get('DB_COPY','False'))
+
+    # dev only resets db 
+    if DB_SETUP:
+        print "Setting up the database"
+        # update the .pgpass file
+        _update_pgpass(DB_HOST, DB_NAME, DB_USER, DB_PASS)
+        # drop db: sudo -u postgres dropdb $DB_NAME
+        try:
+            _pcall(['sudo', '-u', 'postgres', 'dropdb', DB_NAME], stderr=open('/dev/null', 'w'))
+        except:
+            pass
+
+        # drop db user: sudo -u postgres dropuser $DB_USER
+        try:
+            _pcall(['sudo', '-u', 'postgres', 'dropuser', DB_USER], stderr=open('/dev/null', 'w'))
+        except:
+            pass
+
+        # create user: sudo -u postgres psql postgres
+        p = _popen(['sudo', '-u', 'postgres', 'psql'], stdin=subprocess.PIPE)
+        p.stdin.write("CREATE ROLE %s PASSWORD '%s' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;\n" % (DB_USER, DB_PASS))
+        p.stdin.close()
+        p.wait()
+
+        # create db: sudo -u postgres createdb -O $DB_USER $DB_NAME
+        _pcall(['sudo', '-u', 'postgres', 'createdb', '-O', DB_USER, DB_NAME])
+
+    if DB_COPY:
+        print "Copying database"
+        # get the migration db details
+        DB_COPY_USER = _getenv('DB_COPY_USER')
+        DB_COPY_PASS = _getenv('DB_COPY_PASS')
+        DB_COPY_NAME = _getenv('DB_COPY_NAME')
+        DB_COPY_HOST = _getenv('DB_COPY_HOST')
+        # update the .pgpass file
+        _update_pgpass(DB_COPY_HOST, DB_COPY_NAME, DB_COPY_USER, DB_COPY_PASS)
+        # dump the database to a tempfile
+        import tempfile
+        (tmp_fd, tfilename) = tempfile.mkstemp()
+        print "Dumping database '%s' to file '%s'" % (DB_COPY_NAME, tfilename)
+        tfile = os.fdopen(tmp_fd, 'rw')
+        # pg_dump database > tempfile
+        p = _popen(['sudo', '-u', 'postgres',
+                         'pg_dump', '-v',
+                         '-h', DB_COPY_HOST,
+                         '-U', DB_COPY_USER,
+                         '-O',
+                         DB_COPY_NAME],
+                         stdin=subprocess.PIPE,
+                         stdout=tfile)
+        # prompts for password
+        p.wait()
+        tfile.seek(0)
+        # load up dump into new db
+        p = _popen(['sudo', '-u', 'postgres',
+                              'psql',
+                              '-d', DB_NAME,
+                              '-h', DB_HOST,
+                              '-U', DB_USER,
+                              ],
+                              stdin=subprocess.PIPE)
+        p.stdin.write(tfile.read())
+        p.stdin.close()
+        p.wait()
+
+def do_settingsfile(deploy_dir):
+    """
+    Writes the setting file from a template.
+    """
+    print "Writing out settings file"
+    _template(
+              os.path.join(deploy_dir, 'pinax-demo-social', 'settings_template.py'),
+              os.path.join(deploy_dir, 'pinax-demo-social', 'local_settings.py'),
+              )
+
 def do_apache(deploy_dir):
     """
     Setups apache
@@ -133,6 +227,10 @@ def process(deploy_dir):
     """
     Deploys the server to the directory.
     """
+    # setup the database
+    do_database()
+    # setup the settings file
+    do_settingsfile(deploy_dir)
     # setup virtualenv
     do_virtualenv(deploy_dir)
     # django/pinax setup
