@@ -7,7 +7,6 @@ from os.path import abspath, dirname, join
 from site import addsitedir
 
 addsitedir(abspath(join(dirname(__file__), "../../pinax-env/lib/python2.5/site-packages")))
-addsitedir(abspath(join(dirname(__file__), "../../pinax-demo-social")))
 
 sys.path.insert(0, abspath(join(dirname(__file__), "../../")))
 

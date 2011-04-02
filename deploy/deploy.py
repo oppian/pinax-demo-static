@@ -210,7 +210,7 @@ def do_settingsfile(deploy_dir):
     print "Writing out settings file"
     _template(
               os.path.join(deploy_dir, 'pinax-demo-social', 'settings_template.py'),
-              os.path.join(deploy_dir, 'pinax-demo-social', 'local_settings.py'),
+              os.path.join(deploy_dir, 'pinax-demo-social', 'settings_local.py'),
               )
 
 def do_apache(deploy_dir):
