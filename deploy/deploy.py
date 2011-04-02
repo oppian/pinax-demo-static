@@ -103,8 +103,8 @@ def do_virtualenv(deploy_dir):
     execfile(activate_this, dict(__file__=activate_this))
     # setup path
     os.environ['PATH'] = '%s:%s' % (env_bin_dir, _getenv('PATH'))
-    # install requirements: pip install Pinax --no-deps --requirement pinax-demo-social/requirements/project.txt
-    _pcall(['pip', 'install', '--no-deps', '--requirement', 'pinax-demo-social/requirements/project.txt'])
+    # install requirements: pip install Pinax --no-deps --requirement pinaxdemosocial/requirements/project.txt
+    _pcall(['pip', 'install', '--no-deps', '--requirement', 'pinaxdemosocial/requirements/project.txt'])
     
 def do_django(deploy_dir):
     """
@@ -113,7 +113,7 @@ def do_django(deploy_dir):
     print "Running django commands"
 
     # syncdb: python manage.py syncdb --noinput
-    _pcall(['python', 'pinax-demo-social/manage.py', 'syncdb', '--noinput', ])
+    _pcall(['python', 'pinaxdemosocial/manage.py', 'syncdb', '--noinput', ])
 
     # chown the deploy dir to be the apache user
     APACHE_USER = _getenv('APACHE_USER')
@@ -209,8 +209,8 @@ def do_settingsfile(deploy_dir):
     """
     print "Writing out settings file"
     _template(
-              os.path.join(deploy_dir, 'pinax-demo-social', 'settings_template.py'),
-              os.path.join(deploy_dir, 'pinax-demo-social', 'settings_local.py'),
+              os.path.join(deploy_dir, 'pinaxdemosocial', 'settings_template.py'),
+              os.path.join(deploy_dir, 'pinaxdemosocial', 'settings_local.py'),
               )
 
 def do_apache(deploy_dir):

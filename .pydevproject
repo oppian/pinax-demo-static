@@ -6,6 +6,6 @@
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.6</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/pinax-demo-static</path>
-<path>/pinax-demo-static/pinax-demo-social/apps</path>
+<path>/pinax-demo-static/pinaxdemosocial/apps</path>
 </pydev_pathproperty>
 </pydev_project>

@@ -10,6 +10,6 @@ KeepAlive Off
     ErrorLog ${DEPLOY_DIR}/error.log
     LogLevel warn
     
-    WSGIScriptAlias / $DEPLOY_DIR/pinax-demo-social/deploy/pinax.wsgi
+    WSGIScriptAlias / $DEPLOY_DIR/pinaxdemosocial/deploy/pinax.wsgi
     
 </VirtualHost>

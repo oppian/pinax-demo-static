@@ -108,7 +108,7 @@ MIDDLEWARE_CLASSES = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-ROOT_URLCONF = "pinax-demo-social.urls"
+ROOT_URLCONF = "pinaxdemosocial.urls"
 
 TEMPLATE_DIRS = [
     os.path.join(PROJECT_ROOT, "templates"),
@@ -134,7 +134,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "messages.context_processors.inbox",
     "friends_app.context_processors.invitations",
     
-    "pinax-demo-social.context_processors.combined_inbox_count",
+    "pinaxdemosocial.context_processors.combined_inbox_count",
 ]
 
 COMBINED_INBOX_COUNT_SOURCES = [
@@ -281,6 +281,6 @@ DEBUG_TOOLBAR_CONFIG = {
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 try:
-    from pinax-demo-social.settings_local import *
+    from pinaxdemosocial.settings_local import *
 except ImportError:
     pass

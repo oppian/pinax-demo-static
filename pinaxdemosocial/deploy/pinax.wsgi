@@ -1,4 +1,4 @@
-# pinax.wsgi is configured to live in projects/pinax-demo-social/deploy.
+# pinax.wsgi is configured to live in projects/pinaxdemosocial/deploy.
 
 import os
 import sys
@@ -11,7 +11,7 @@ addsitedir(abspath(join(dirname(__file__), "../../pinax-env/lib/python2.5/site-p
 sys.path.insert(0, abspath(join(dirname(__file__), "../../")))
 
 from django.conf import settings
-os.environ["DJANGO_SETTINGS_MODULE"] = "pinax-demo-social.settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "pinaxdemosocial.settings"
 
 sys.path.insert(0, join(settings.PROJECT_ROOT, "apps"))
 
